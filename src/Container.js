@@ -32,6 +32,7 @@ export default class Container extends PureComponent {
 
   subscribe = handler => {
     this.subscribers = this.subscribers.concat(handler);
+    this.notifySubscribers();
   }
 
   unsubscribe = handler => {
