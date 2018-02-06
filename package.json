@@ -1,5 +1,5 @@
 {
-  "name": "react-sticky",
+  "name": "resticky",
   "version": "6.0.2",
   "description": "Sticky component for React",
   "main": "lib/index.js",
