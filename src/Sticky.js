@@ -22,7 +22,8 @@ export default class Sticky extends Component {
   static contextTypes = {
     subscribe: PropTypes.func,
     unsubscribe: PropTypes.func,
-    getParent: PropTypes.func
+    getParent: PropTypes.func,
+    forceUpdate: PropTypes.func
   }
 
   state = {
@@ -94,7 +95,8 @@ export default class Sticky extends Component {
         distanceFromTop: this.state.distanceFromTop,
         distanceFromBottom: this.state.distanceFromBottom,
         calculatedHeight: this.state.calculatedHeight,
-        style: this.state.style
+        style: this.state.style,
+        forceUpdate:this.context.forceUpdate,
       }),
       { ref: content => { this.content = ReactDOM.findDOMNode(content); } }
     )
