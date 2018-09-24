@@ -1,6 +1,6 @@
 {
   "name": "react-sticky-plus",
-  "version": "1.0.3",
+  "version": "1.1.8",
   "description": "Sticky component for React (fork of react-sticky)",
   "main": "lib/index.js",
   "scripts": {
