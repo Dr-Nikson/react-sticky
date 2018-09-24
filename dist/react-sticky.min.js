@@ -52,7 +52,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -80,15 +80,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.Channel = _channel2.default;
 	exports.default = _sticky2.default;
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -113,32 +115,38 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return l(data);
 	    });
 	  };
+
+	  this.getCurrentData = function () {
+	    return _extends({}, data);
+	  };
 	};
 
 	exports.default = Channel;
 	module.exports = exports['default'];
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -156,6 +164,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -171,12 +181,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var _this = _possibleConstructorReturn(this, (Container.__proto__ || Object.getPrototypeOf(Container)).call(this, props));
 
 	    _this.updateOffset = function (_ref) {
-	      var inherited = _ref.inherited;
-	      var offset = _ref.offset;
+	      var inherited = _ref.inherited,
+	          offset = _ref.offset;
 
 	      _this.channel.update(function (data) {
 	        data.inherited = inherited + offset;
 	      });
+	    };
+
+	    _this.handleNodeRef = function (node) {
+	      var useContainerAsTarget = _this.props.useContainerAsTarget;
+
+
+	      var parentChannel = _this.context['sticky-channel'];
+	      var defaultNode = parentChannel && parentChannel.getCurrentData().scrollableTarget || window;
+
+	      _this.channel.update(function (data) {
+	        data.node = node;
+	        data.scrollableTarget = useContainerAsTarget ? node : defaultNode;
+	      });
+
+	      node && (_this.rect = node.getBoundingClientRect());
 	    };
 
 	    _this.channel = new _channel2.default({ inherited: 0, offset: 0, node: null });
@@ -194,15 +219,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function componentWillMount() {
 	      var parentChannel = this.context['sticky-channel'];
 	      if (parentChannel) parentChannel.subscribe(this.updateOffset);
-	    }
-	  }, {
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      var node = _reactDom2.default.findDOMNode(this);
-	      this.channel.update(function (data) {
-	        data.node = node;
-	      });
-	      this.rect = node.getBoundingClientRect();
 	    }
 	  }, {
 	    key: 'componentWillUnmount',
@@ -235,9 +251,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'render',
 	    value: function render() {
+	      var _props = this.props,
+	          useContainerAsTarget = _props.useContainerAsTarget,
+	          rest = _objectWithoutProperties(_props, ['useContainerAsTarget']);
+
 	      return _react2.default.createElement(
 	        'div',
-	        this.props,
+	        _extends({ ref: this.handleNodeRef }, rest),
 	        this.props.children
 	      );
 	    }
@@ -255,9 +275,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = Container;
 	module.exports = exports['default'];
 
-/***/ },
+/***/ }),
 /* 5 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -289,6 +309,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+	var TARGET_EVENTS = ['resize', 'scroll', 'touchstart', 'touchmove', 'touchend', 'pageshow', 'load'];
+
+	var getNodeHeight = function getNodeHeight(node) {
+	  return node.innerHeight || node.clientHeight;
+	};
+
 	var Sticky = function (_React$Component) {
 	  _inherits(Sticky, _React$Component);
 
@@ -311,10 +337,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  }, {
 	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      this.on(['resize', 'scroll', 'touchstart', 'touchmove', 'touchend', 'pageshow', 'load'], this.handleRecomputateEvents);
-	      this.recomputeState();
-	    }
+	    value: function componentDidMount() {}
 	  }, {
 	    key: 'componentWillReceiveProps',
 	    value: function componentWillReceiveProps(nextProps) {
@@ -323,7 +346,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'componentWillUnmount',
 	    value: function componentWillUnmount() {
-	      this.off(['resize', 'scroll', 'touchstart', 'touchmove', 'touchend', 'pageshow', 'load'], this.handleRecomputateEvents);
+	      this.off(TARGET_EVENTS, this.handleRecomputateEvents);
 	      this.channel.unsubscribe(this.updateContext);
 	    }
 	  }, {
@@ -358,10 +381,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'isStickyBottom',
 	    value: function isStickyBottom(props, state) {
 	      var bottomOffset = props.bottomOffset;
-	      var containerOffset = state.containerOffset;
-	      var height = state.height;
-	      var placeholderTop = state.placeholderTop;
-	      var winHeight = state.winHeight;
+	      var containerOffset = state.containerOffset,
+	          height = state.height,
+	          placeholderTop = state.placeholderTop,
+	          winHeight = state.winHeight;
 
 
 	      var bottomBreakpoint = containerOffset - bottomOffset;
@@ -391,21 +414,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'on',
 	    value: function on(events, callback) {
+	      var _this2 = this;
+
 	      events.forEach(function (evt) {
-	        window.addEventListener(evt, callback);
+	        _this2.scrollableTarget.addEventListener(evt, callback);
 	      });
 	    }
 	  }, {
 	    key: 'off',
 	    value: function off(events, callback) {
+	      var _this3 = this;
+
 	      events.forEach(function (evt) {
-	        window.removeEventListener(evt, callback);
+	        _this3.scrollableTarget.removeEventListener(evt, callback);
 	      });
 	    }
 	  }, {
 	    key: 'shouldComponentUpdate',
 	    value: function shouldComponentUpdate(newProps, newState) {
-	      var _this2 = this;
+	      var _this4 = this;
 
 	      // Have we changed the number of props?
 	      var propNames = Object.keys(this.props);
@@ -413,7 +440,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      // Have we changed any prop values?
 	      var valuesMatch = propNames.every(function (key) {
-	        return newProps.hasOwnProperty(key) && newProps[key] === _this2.props[key];
+	        return newProps.hasOwnProperty(key) && newProps[key] === _this4.props[key];
 	      });
 	      if (!valuesMatch) return true;
 
@@ -439,19 +466,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'getPositionOffset',
 	    value: function getPositionOffset() {
-	      var _state = this.state;
-	      var containerOffset = _state.containerOffset;
-	      var containerTop = _state.containerTop;
-	      var containerBottom = _state.containerBottom;
-	      var height = _state.height;
-	      var _props = this.props;
-	      var bottomOffset = _props.bottomOffset;
-	      var position = _props.position;
-	      var topOffset = _props.topOffset;
+	      var _state = this.state,
+	          containerOffset = _state.containerOffset,
+	          containerTop = _state.containerTop,
+	          containerBottom = _state.containerBottom,
+	          height = _state.height;
+	      var _props = this.props,
+	          bottomOffset = _props.bottomOffset,
+	          position = _props.position,
+	          topOffset = _props.topOffset;
 
 
 	      var bottomLimit = containerBottom - height - bottomOffset;
-	      var topLimit = window.innerHeight - containerTop - topOffset;
+	      var topLimit = getNodeHeight(this.scrollableTarget) - containerTop - topOffset;
 
 	      return position === 'top' ? Math.min(containerOffset, bottomLimit) : Math.min(containerOffset, topLimit);
 	    }
@@ -465,20 +492,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function render() {
 	      var _extends2;
 
-	      var _props2 = this.props;
-	      var propsClassName = _props2.className;
-	      var position = _props2.position;
-	      var stickyClassName = _props2.stickyClassName;
-	      var stickyStyle = _props2.stickyStyle;
-	      var style = _props2.style;
+	      var _props2 = this.props,
+	          propsClassName = _props2.className,
+	          position = _props2.position,
+	          stickyClassName = _props2.stickyClassName,
+	          stickyStyle = _props2.stickyStyle,
+	          style = _props2.style,
+	          props = _objectWithoutProperties(_props2, ['className', 'position', 'stickyClassName', 'stickyStyle', 'style']);
 
-	      var props = _objectWithoutProperties(_props2, ['className', 'position', 'stickyClassName', 'stickyStyle', 'style']);
-
-	      var _state2 = this.state;
-	      var isSticky = _state2.isSticky;
-	      var height = _state2.height;
-	      var width = _state2.width;
-	      var xOffset = _state2.xOffset;
+	      var _state2 = this.state,
+	          isSticky = _state2.isSticky,
+	          height = _state2.height,
+	          width = _state2.width,
+	          xOffset = _state2.xOffset;
 
 
 	      var placeholderStyle = { paddingBottom: isSticky ? height : 0 };
@@ -538,49 +564,62 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 	var _initialiseProps = function _initialiseProps() {
-	  var _this3 = this;
+	  var _this5 = this;
 
 	  this.handleRecomputateEvents = function () {
-	    return _this3.recomputeState();
+	    return _this5.recomputeState();
 	  };
 
 	  this.updateContext = function (_ref) {
-	    var inherited = _ref.inherited;
-	    var node = _ref.node;
+	    var inherited = _ref.inherited,
+	        node = _ref.node,
+	        scrollableTarget = _ref.scrollableTarget;
 
-	    _this3.containerNode = node;
-	    _this3.recomputeState(_this3.props, inherited);
+	    if (!scrollableTarget) {
+	      _this5.scrollableTarget = null;
+
+	      _this5.off(TARGET_EVENTS, _this5.handleRecomputateEvents);
+
+	      return;
+	    }
+
+	    _this5.scrollableTarget = scrollableTarget;
+	    _this5.containerNode = node;
+
+	    _this5.on(TARGET_EVENTS, _this5.handleRecomputateEvents);
+
+	    _this5.recomputeState(_this5.props, inherited);
 	  };
 
 	  this.recomputeState = function () {
-	    var props = arguments.length <= 0 || arguments[0] === undefined ? _this3.props : arguments[0];
-	    var inherited = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+	    var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _this5.props;
+	    var inherited = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
-	    var nextState = _extends({}, _this3.state, {
-	      height: _this3.getHeight(),
-	      width: _this3.getWidth(),
-	      xOffset: _this3.getXOffset(),
-	      containerOffset: inherited === false ? _this3.state.containerOffset : inherited,
-	      containerBottom: _this3.getContainerRect().bottom,
-	      containerTop: _this3.getContainerRect().top,
-	      placeholderTop: _this3.getPlaceholderRect().top,
-	      winHeight: window.innerHeight
+	    var nextState = _extends({}, _this5.state, {
+	      height: _this5.getHeight(),
+	      width: _this5.getWidth(),
+	      xOffset: _this5.getXOffset(),
+	      containerOffset: inherited === false ? _this5.state.containerOffset : inherited,
+	      containerBottom: _this5.getContainerRect().bottom,
+	      containerTop: _this5.getContainerRect().top,
+	      placeholderTop: _this5.getPlaceholderRect().top,
+	      winHeight: getNodeHeight(_this5.scrollableTarget)
 	    });
 
-	    var isSticky = _this3.isSticky(props, nextState);
+	    var isSticky = _this5.isSticky(props, nextState);
 	    var finalNextState = _extends({}, nextState, { isSticky: isSticky });
-	    var hasChanged = _this3.state.isSticky !== isSticky;
+	    var hasChanged = _this5.state.isSticky !== isSticky;
 
-	    _this3.setState(finalNextState, function () {
+	    _this5.setState(finalNextState, function () {
 	      // After component did update lets broadcast update msg to channel
 	      if (hasChanged) {
-	        if (_this3.channel) {
-	          _this3.channel.update(function (data) {
-	            data.offset = isSticky ? _this3.state.height : 0;
+	        if (_this5.channel) {
+	          _this5.channel.update(function (data) {
+	            data.offset = isSticky ? _this5.state.height : 0;
 	          });
 	        }
 
-	        _this3.props.onStickyStateChange(isSticky);
+	        _this5.props.onStickyStateChange(isSticky);
 	      }
 	    });
 	  };
@@ -589,7 +628,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = Sticky;
 	module.exports = exports['default'];
 
-/***/ }
+/***/ })
 /******/ ])
 });
 ;

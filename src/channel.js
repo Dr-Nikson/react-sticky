@@ -16,5 +16,7 @@ export default class Channel {
       if (fn) fn(data);
       listeners.forEach((l) => l(data));
     }
+
+    this.getCurrentData = () => ({ ...data })
   }
 }

@@ -1,6 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+const TARGET_EVENTS = ['resize', 'scroll', 'touchstart', 'touchmove', 'touchend', 'pageshow', 'load']
+
+const getNodeHeight = node => node.innerHeight || node.clientHeight
+
 export default class Sticky extends React.Component {
 
   static propTypes = {
@@ -42,8 +46,6 @@ export default class Sticky extends React.Component {
   }
 
   componentDidMount() {
-    this.on(['resize', 'scroll', 'touchstart', 'touchmove', 'touchend', 'pageshow', 'load'], this.handleRecomputateEvents);
-    this.recomputeState();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -51,7 +53,7 @@ export default class Sticky extends React.Component {
   }
 
   componentWillUnmount() {
-    this.off(['resize', 'scroll', 'touchstart', 'touchmove', 'touchend', 'pageshow', 'load'], this.handleRecomputateEvents);
+    this.off(TARGET_EVENTS, this.handleRecomputateEvents);
     this.channel.unsubscribe(this.updateContext);
   }
 
@@ -109,8 +111,20 @@ export default class Sticky extends React.Component {
     return this.recomputeState()
   }
 
-  updateContext = ({ inherited, node }) => {
+  updateContext = ({ inherited, node, scrollableTarget }) => {
+    if (!scrollableTarget) {
+      this.scrollableTarget = null;
+
+      this.off(TARGET_EVENTS, this.handleRecomputateEvents);
+
+      return;
+    }
+
+    this.scrollableTarget = scrollableTarget;
     this.containerNode = node;
+
+    this.on(TARGET_EVENTS, this.handleRecomputateEvents);
+
     this.recomputeState(this.props, inherited)
   }
 
@@ -124,7 +138,7 @@ export default class Sticky extends React.Component {
       containerBottom: this.getContainerRect().bottom,
       containerTop: this.getContainerRect().top,
       placeholderTop: this.getPlaceholderRect().top,
-      winHeight: window.innerHeight,
+      winHeight: getNodeHeight(this.scrollableTarget),
     }
 
     const isSticky = this.isSticky(props, nextState);
@@ -147,13 +161,13 @@ export default class Sticky extends React.Component {
 
   on(events, callback) {
     events.forEach((evt) => {
-      window.addEventListener(evt, callback);
+      this.scrollableTarget.addEventListener(evt, callback);
     });
   }
 
   off(events, callback) {
     events.forEach((evt) => {
-      window.removeEventListener(evt, callback);
+      this.scrollableTarget.removeEventListener(evt, callback);
     });
   }
 
@@ -193,7 +207,7 @@ export default class Sticky extends React.Component {
     const { bottomOffset, position, topOffset } = this.props;
 
     const bottomLimit = containerBottom - height - bottomOffset
-    const topLimit =  window.innerHeight - containerTop - topOffset
+    const topLimit = getNodeHeight(this.scrollableTarget) - containerTop - topOffset
 
     return position === 'top'
       ? Math.min(containerOffset, bottomLimit)

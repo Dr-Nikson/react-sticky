@@ -15,6 +15,7 @@ export default class Container extends React.Component {
 
   constructor(props) {
     super(props);
+
     this.channel = new Channel({ inherited: 0, offset: 0, node: null });
     this.rect = {}
   }
@@ -26,12 +27,6 @@ export default class Container extends React.Component {
   componentWillMount() {
     const parentChannel = this.context['sticky-channel'];
     if (parentChannel) parentChannel.subscribe(this.updateOffset);
-  }
-
-  componentDidMount() {
-    const node = ReactDOM.findDOMNode(this);
-    this.channel.update((data) => { data.node = node });
-    this.rect = node.getBoundingClientRect()
   }
 
   componentWillUnmount() {
@@ -58,9 +53,30 @@ export default class Container extends React.Component {
     this.channel.update((data) => { data.inherited = inherited + offset });
   }
 
+  handleNodeRef = node => {
+    const { useContainerAsTarget } = this.props;
+
+    const parentChannel = this.context['sticky-channel'];
+    const defaultNode = (
+      parentChannel && parentChannel.getCurrentData().scrollableTarget ||
+      window
+    )
+
+    this.channel.update((data) => {
+      data.node = node;
+      data.scrollableTarget = useContainerAsTarget ? node : defaultNode
+    });
+
+    node && (this.rect = node.getBoundingClientRect());
+  }
+
   render() {
-    return <div {...this.props}>
-      {this.props.children}
-    </div>
+    const { useContainerAsTarget, ...rest } = this.props;
+
+    return (
+      <div ref={this.handleNodeRef} {...rest}>
+        {this.props.children}
+      </div>
+    )
   }
 }
